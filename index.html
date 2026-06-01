@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Barbero — Reservas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== CONFIG — EDITA AQUÍ ===== */
+/* Colores, fuentes y estilos generales en config.js */
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0b07;
+  --cream:#f5f0e8;
+  --gold:#c9a84c;
+  --gold-l:#e8d08a;
+  --gold-d:#8a6520;
+  --surface:#1a140c;
+  --card:#221a10;
+  --border:rgba(201,168,76,0.2);
+  --border-h:rgba(201,168,76,0.5);
+  --muted:#7a6850;
+  --text:#f0e8d8;
+  --green-bg:#1a2e1a;
+  --green-border:#2a5a2a;
+  --green-text:#5acc8a;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:40px}
+
+/* HEADER */
+.header{padding:2.5rem 1.5rem 1.5rem;text-align:center;border-bottom:0.5px solid var(--border);margin-bottom:0}
+.logo{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);letter-spacing:5px}
+.logo-sub{font-size:11px;letter-spacing:7px;color:var(--muted);margin-top:6px;font-weight:300;text-transform:uppercase}
+
+/* STEPS BAR */
+.step-bar{display:flex;align-items:center;padding:1.25rem 1.5rem;border-bottom:0.5px solid var(--border);margin-bottom:0;overflow-x:auto}
+.stp{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap;transition:color .3s}
+.stp.active{color:var(--gold)}
+.stp.done{color:var(--gold-d)}
+.stp-n{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.stp.active .stp-n{background:var(--gold);border-color:var(--gold);color:#000}
+.stp.done .stp-n{background:var(--gold-d);border-color:var(--gold-d);color:#fff}
+.stp-line{flex:1;min-width:12px;height:0.5px;background:var(--border);margin:0 4px}
+
+/* MAIN */
+.main{max-width:520px;margin:0 auto;padding:1.75rem 1.25rem}
+.sec-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-l);margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.5}
+
+/* SERVICES */
+.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.svc{border:1px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:all .2s;background:var(--card);text-align:left;width:100%}
+.svc:hover{border-color:var(--border-h)}
+.svc.sel{border-color:var(--gold);background:#2a1e08}
+.svc-ico{font-size:22px;margin-bottom:7px}
+.svc-name{font-weight:500;font-size:14px;color:var(--text);margin-bottom:4px}
+.svc-meta{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.svc-price{color:var(--gold);font-weight:500}
+
+/* CALENDAR */
+.cal-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1.25rem}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-nav{background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--gold);font-size:16px;display:flex;align-items:center;justify-content:center}
+.cal-nav:hover{border-color:var(--gold)}
+.cal-month-lbl{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold-l)}
+.day-names{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:6px}
+.dn{font-size:11px;color:var(--muted);padding:3px 0;letter-spacing:.3px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cd{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:7px;cursor:pointer;color:var(--text);transition:all .15s;border:1px solid transparent}
+.cd:hover:not(.dis):not(.emp){background:var(--surface);border-color:var(--border)}
+.cd.sel{background:var(--gold);color:#000;font-weight:600}
+.cd.today{border-color:var(--gold)}
+.cd.dis{color:#3a3020;cursor:default;pointer-events:none}
+.cd.emp{cursor:default}
+
+/* TIMES */
+.times-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem;margin-top:10px}
+.tb{border:1px solid var(--border);border-radius:8px;padding:9px 4px;font-size:13px;font-weight:500;cursor:pointer;background:var(--card);color:var(--text);transition:all .15s;text-align:center;width:100%}
+.tb:hover{border-color:var(--border-h)}
+.tb.sel{background:var(--gold);border-color:var(--gold);color:#000}
+.tb.busy{background:#1a1208;color:#3a3020;cursor:not-allowed;text-decoration:line-through}
+
+/* FORM */
+.fg{margin-bottom:14px}
+.fl{font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase}
+.fi{width:100%;border:1px solid var(--border);border-radius:8px;padding:11px 13px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--gold)}
+.fi::placeholder{color:var(--muted)}
+
+/* PAYMENT */
+.pay-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.po{border:1px solid var(--border);border-radius:10px;padding:14px 8px;cursor:pointer;background:var(--card);text-align:center;transition:all .2s;width:100%}
+.po:hover{border-color:var(--border-h)}
+.po.sel{border-color:var(--gold);background:#2a1e08}
+.po-ico{font-size:22px;margin-bottom:6px}
+.po-name{font-size:13px;font-weight:500;color:var(--text)}
+.po-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.info-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:1.25rem}
+.irow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.irow:last-child{border:none}
+.irow label{color:var(--muted)}
+.irow span{color:var(--text);font-weight:500}
+.copy-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--gold);cursor:pointer;font-family:'DM Sans',sans-serif}
+.copy-btn:hover{border-color:var(--gold)}
+
+/* SUMMARY */
+.summ{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1.5rem}
+.srow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.srow:last-child{border:none;padding-top:10px;margin-top:4px}
+.srow .lbl{color:var(--muted)}
+.srow .val{font-weight:500;color:var(--text)}
+.srow .total{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold)}
+
+/* BUTTONS */
+.btn{width:100%;border:none;border-radius:10px;padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:.5px;cursor:pointer;transition:all .2s;margin-bottom:9px;text-align:center}
+.btn-gold{background:var(--gold);color:#000}
+.btn-gold:hover:not(:disabled){background:var(--gold-l);transform:translateY(-1px)}
+.btn-gold:disabled{background:#3a3020;color:#7a6840;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--muted);color:var(--text)}
+
+/* SUCCESS */
+.success-wrap{text-align:center;padding:1rem 0}
+.success-ico{font-size:52px;margin-bottom:1rem;display:block}
+.success-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold-l);margin-bottom:8px}
+.success-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1.5rem}
+.success-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:left;margin-bottom:1.5rem}
+.sc-row{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);align-items:flex-start}
+.sc-row:last-child{border:none}
+.sc-ico{color:var(--gold);font-size:18px;flex-shrink:0}
+.sc-info strong{display:block;font-size:13px;font-weight:500;color:var(--text)}
+.sc-info span{font-size:12px;color:var(--muted)}
+.action-btn{display:flex;align-items:center;justify-content:center;gap:9px;border-radius:8px;padding:13px 18px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;width:100%;margin-bottom:10px;border:none;font-family:'DM Sans',sans-serif}
+.btn-gcal{background:var(--surface);border:1px solid var(--gold);color:var(--gold)}
+.btn-gcal:hover{background:#2a1e08}
+.btn-wa{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green-text)}
+.btn-wa:hover{background:#1e3a1e}
+
+.hidden{display:none}
+.notice{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--muted);text-align:center;margin-bottom:1.25rem;line-height:1.5}
+
+@media(max-width:400px){
+  .svc-grid{grid-template-columns:1fr}
+  .pay-opts{grid-template-columns:1fr}
+  .times-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo" id="shopName">✦ EL BARBERO ✦</div>
+  <div class="logo-sub" id="shopTagline">Reservas online</div>
+</div>
+
+<!-- STEP BAR (se actualiza con JS) -->
+<div class="step-bar" id="stepBar">
+  <div class="stp active" id="s1"><div class="stp-n">1</div><span>Servicio</span></div>
+  <div class="stp-line"></div>
+  <div class="stp" id="s2"><div class="stp-n">2</div><span>Fecha</span></div>
+  <div class="stp-line"></div>
+  <div class="stp" id="s3"><div class="stp-n">3</div><span>Datos</span></div>
+  <div class="stp-line"></div>
+  <div class="stp" id="s4"><div class="stp-n">4</div><span>Pago</span></div>
+  <div class="stp-line"></div>
+  <div class="stp" id="s5"><div class="stp-n">5</div><span>Confirmar</span></div>
+</div>
+
+<div class="main">
+
+  <!-- STEP 1: SERVICIO -->
+  <div id="v1">
+    <p class="sec-title">¿Qué servicio necesitas?</p>
+    <p class="sec-sub">Elige tu servicio — todos incluyen lavado</p>
+    <div class="svc-grid" id="svcGrid"></div>
+    <button class="btn btn-gold" id="b1" disabled onclick="goStep(2)">Siguiente →</button>
+  </div>
+
+  <!-- STEP 2: FECHA Y HORA -->
+  <div id="v2" class="hidden">
+    <p class="sec-title">Elige fecha y hora</p>
+    <p class="sec-sub">Solo se muestran horarios disponibles</p>
+    <div class="cal-box">
+      <div class="cal-head">
+        <button class="cal-nav" onclick="chMon(-1)">‹</button>
+        <span class="cal-month-lbl" id="calLbl"></span>
+        <button class="cal-nav" onclick="chMon(1)">›</button>
+      </div>
+      <div class="day-names">
+        <div class="dn">D</div><div class="dn">L</div><div class="dn">M</div>
+        <div class="dn">M</div><div class="dn">J</div><div class="dn">V</div><div class="dn">S</div>
+      </div>
+      <div class="cal-grid" id="calG"></div>
+    </div>
+    <div id="timesWrap" class="hidden">
+      <p class="sec-sub" id="timesLbl">Horarios disponibles</p>
+      <div class="times-grid" id="timesG"></div>
+    </div>
+    <button class="btn btn-gold" id="b2" disabled onclick="goStep(3)">Siguiente →</button>
+    <button class="btn btn-ghost" onclick="goStep(1)">← Volver</button>
+  </div>
+
+  <!-- STEP 3: DATOS -->
+  <div id="v3" class="hidden">
+    <p class="sec-title">Tus datos</p>
+    <p class="sec-sub">Para confirmar y recordarte tu cita</p>
+    <div class="fg">
+      <label class="fl">Nombre completo</label>
+      <input class="fi" id="fName" type="text" placeholder="Juan Pérez" oninput="chkForm()">
+    </div>
+    <div class="fg">
+      <label class="fl">WhatsApp</label>
+      <input class="fi" id="fPhone" type="tel" placeholder="+56 9 1234 5678" oninput="chkForm()">
+    </div>
+    <div class="fg">
+      <label class="fl">Email (opcional)</label>
+      <input class="fi" id="fEmail" type="email" placeholder="juan@email.com">
+    </div>
+    <button class="btn btn-gold" id="b3" disabled onclick="goStep(4)">Siguiente →</button>
+    <button class="btn btn-ghost" onclick="goStep(2)">← Volver</button>
+  </div>
+
+  <!-- STEP 4: PAGO -->
+  <div id="v4" class="hidden">
+    <p class="sec-title">Método de pago</p>
+    <p class="sec-sub">Elige cómo quieres pagar tu servicio</p>
+    <div class="pay-opts" id="payOpts"></div>
+
+    <div id="infoEfectivo" class="info-box hidden">
+      <div class="irow"><label>¿Cuándo?</label><span>Al llegar a la barbería</span></div>
+      <div class="irow"><label>Monto</label><span id="montoEfectivo" style="color:var(--gold)">—</span></div>
+    </div>
+
+    <div id="infoTransfer" class="info-box hidden">
+      <p style="font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Datos de transferencia</p>
+      <div class="irow"><label>Banco</label><span id="trBanco">—</span></div>
+      <div class="irow"><label>Tipo</label><span id="trTipo">—</span></div>
+      <div class="irow"><label>N° cuenta</label><span id="trCuenta">— <button class="copy-btn" onclick="copyTxt(document.getElementById('trCuenta').dataset.val)">Copiar</button></span></div>
+      <div class="irow"><label>RUT</label><span id="trRut">—</span></div>
+      <div class="irow"><label>Nombre</label><span id="trNombre">—</span></div>
+      <div class="irow"><label>Monto</label><span id="trMonto" style="color:var(--gold)">—</span></div>
+    </div>
+
+    <button class="btn btn-gold" id="b4" disabled onclick="goStep(5)">Siguiente →</button>
+    <button class="btn btn-ghost" onclick="goStep(3)">← Volver</button>
+  </div>
+
+  <!-- STEP 5: CONFIRMAR -->
+  <div id="v5" class="hidden">
+    <p class="sec-title">Confirma tu cita</p>
+    <p class="sec-sub">Revisa todos los detalles antes de agendar</p>
+    <div class="summ">
+      <div class="srow"><span class="lbl">Servicio</span><span class="val" id="sm-svc">—</span></div>
+      <div class="srow"><span class="lbl">Duración</span><span class="val" id="sm-dur">—</span></div>
+      <div class="srow"><span class="lbl">Fecha</span><span class="val" id="sm-date">—</span></div>
+      <div class="srow"><span class="lbl">Hora</span><span class="val" id="sm-time">—</span></div>
+      <div class="srow"><span class="lbl">Nombre</span><span class="val" id="sm-name">—</span></div>
+      <div class="srow"><span class="lbl">WhatsApp</span><span class="val" id="sm-phone">—</span></div>
+      <div class="srow"><span class="lbl">Método de pago</span><span class="val" id="sm-pay">—</span></div>
+      <div class="srow"><span class="lbl">Total</span><span class="total" id="sm-total">—</span></div>
+    </div>
+    <div class="notice" id="payNotice"></div>
+    <button class="btn btn-gold" id="b5" onclick="confirmar()">✓ Confirmar reserva</button>
+    <button class="btn btn-ghost" onclick="goStep(4)">← Volver</button>
+    <div id="loadingMsg" class="hidden notice" style="color:var(--gold)">⏳ Agendando tu cita...</div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="vSuccess" class="hidden success-wrap">
+    <span class="success-ico">✦</span>
+    <h1 class="success-title">¡Reserva confirmada!</h1>
+    <p class="success-sub" id="succSub">Tu cita ha quedado agendada. ¡Te esperamos!</p>
+    <div class="success-card">
+      <div class="sc-row">
+        <span class="sc-ico">✂️</span>
+        <div class="sc-info"><strong id="sc-svc">—</strong><span id="sc-dur">—</span></div>
+      </div>
+      <div class="sc-row">
+        <span class="sc-ico">📅</span>
+        <div class="sc-info"><strong id="sc-date">—</strong><span id="sc-time">—</span></div>
+      </div>
+      <div class="sc-row">
+        <span class="sc-ico">👤</span>
+        <div class="sc-info"><strong id="sc-name">—</strong><span id="sc-phone">—</span></div>
+      </div>
+      <div class="sc-row">
+        <span class="sc-ico">💳</span>
+        <div class="sc-info"><strong id="sc-pay">—</strong><span id="sc-total">—</span></div>
+      </div>
+    </div>
+    <a class="action-btn btn-gcal" id="gcalLink" href="#" target="_blank">📅 Agregar a Google Calendar</a>
+    <a class="action-btn btn-wa" id="waLink" href="#" target="_blank">💬 Confirmar por WhatsApp</a>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ===== CONFIG.JS — EDITA ESTE ARCHIVO ===== -->
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
